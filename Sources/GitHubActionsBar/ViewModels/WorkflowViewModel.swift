@@ -131,7 +131,7 @@ final class WorkflowViewModel {
         errorMessage = nil
 
         let activeRepos = repos.filter { selectedRepoFullNames.contains($0.fullName) }
-        let repoTuples = activeRepos.map { (owner: $0.owner.login, repo: $0.name) }
+        let repoTuples = activeRepos.map { (owner: $0.owner.login, repo: $0.name, branch: $0.defaultBranch) }
 
         guard !repoTuples.isEmpty else {
             runs = []
@@ -250,13 +250,21 @@ final class WorkflowViewModel {
         let latest = latestRunPerWorkflow(runs)
         guard !latest.isEmpty else { return .idle }
 
-        let hasInProgress = latest.contains {
+        // Only consider workflows that ran recently (within 24h of the most recent run).
+        // This prevents stale failures from old workflows dragging the status to red.
+        guard let mostRecentDate = latest.map(\.updatedAt).max() else { return .idle }
+        let recentRuns = latest.filter {
+            mostRecentDate.timeIntervalSince($0.updatedAt) < 24 * 3600
+        }
+        let runsToConsider = recentRuns.isEmpty ? latest : recentRuns
+
+        let hasInProgress = runsToConsider.contains {
             $0.status == .inProgress || $0.status == .queued
         }
-        let hasFailed = latest.contains {
+        let hasFailed = runsToConsider.contains {
             $0.conclusion == .failure || $0.conclusion == .timedOut
         }
-        let hasSuccess = latest.contains { $0.conclusion == .success }
+        let hasSuccess = runsToConsider.contains { $0.conclusion == .success }
 
         if hasInProgress { return .inProgress }
         if hasFailed && hasSuccess { return .mixed }

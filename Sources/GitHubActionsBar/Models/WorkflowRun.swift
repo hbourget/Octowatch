@@ -17,9 +17,10 @@ struct Repository: Codable, Sendable, Identifiable {
     let owner: RepositoryOwner
     let isPrivate: Bool
     let htmlUrl: String
+    let defaultBranch: String?
 
     private enum CodingKeys: String, CodingKey {
-        case id, name, fullName, owner, htmlUrl
+        case id, name, fullName, owner, htmlUrl, defaultBranch
         case isPrivate = "private"
     }
 }
@@ -39,6 +40,7 @@ struct WorkflowRun: Codable, Sendable, Identifiable {
     let id: Int64
     let name: String?
     let headBranch: String?
+    let headSha: String?
     let status: RunStatus?
     let conclusion: RunConclusion?
     let htmlUrl: String

@@ -33,27 +33,31 @@ actor GitHubAPIClient {
 
     // MARK: - Workflow Runs
 
-    func fetchWorkflowRuns(owner: String, repo: String, token: String) async throws
+    func fetchWorkflowRuns(owner: String, repo: String, branch: String?, token: String) async throws
         -> WorkflowRunsResponse
     {
+        var queryItems = [
+            URLQueryItem(name: "per_page", value: "15")
+        ]
+        if let branch {
+            queryItems.append(URLQueryItem(name: "branch", value: branch))
+        }
         let request = makeRequest(
             path: "/repos/\(owner)/\(repo)/actions/runs",
-            queryItems: [
-                URLQueryItem(name: "per_page", value: "15")
-            ],
+            queryItems: queryItems,
             token: token
         )
         return try await perform(request)
     }
 
-    func fetchAllWorkflowRuns(repos: [(owner: String, repo: String)], token: String) async throws
+    func fetchAllWorkflowRuns(repos: [(owner: String, repo: String, branch: String?)], token: String) async throws
         -> [WorkflowRun]
     {
         try await withThrowingTaskGroup(of: [WorkflowRun].self) { group in
-            for (owner, repo) in repos {
+            for (owner, repo, branch) in repos {
                 group.addTask {
                     let response = try await self.fetchWorkflowRuns(
-                        owner: owner, repo: repo, token: token)
+                        owner: owner, repo: repo, branch: branch, token: token)
                     return response.workflowRuns
                 }
             }
