@@ -31,7 +31,7 @@ Octowatch is fully local. It does not collect, store, or transmit any data to ex
 Clone the repository and use the provided Makefile:
 
 ```bash
-git clone https://github.com/hugobourget/octowatch.git
+git clone https://github.com/hbourget/octowatch.git
 cd octowatch
 make run
 ```
