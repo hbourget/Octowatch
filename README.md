@@ -31,8 +31,8 @@ Octowatch is fully local. It does not collect, store, or transmit any data to ex
 Clone the repository and use the provided Makefile:
 
 ```bash
-git clone https://github.com/hbourget/octowatch.git
-cd octowatch
+git clone https://github.com/hbourget/Octowatch.git
+cd Octowatch
 make run
 ```
 
@@ -75,6 +75,10 @@ Because of this built-in macOS security feature, the system will ask for your pe
 When the prompt appears, enter your Mac password and click **"Always Allow"**. macOS will remember this preference and the app will run silently in the background from then on.
 
 > **Note:** If this project gets enough traction and users, I plan to purchase an official Apple Developer license to properly code-sign the app, which will prevent this prompt from appearing at all.
+
+## Support
+
+Questions, bug reports, or feature requests? Open an [issue](https://github.com/hbourget/Octowatch/issues).
 
 ## License
 
